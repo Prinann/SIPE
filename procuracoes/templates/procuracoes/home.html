@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.I.P.E. - Alerta de Vencimento</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo ao S.I.P.E.</h1>
+        <p>Olá, {{ user.username }}!</p>
+        <p>
+            <a href="{% url 'cadastrar_procuracao' %}">Cadastrar Nova Procuração</a> | 
+            <a href="{% url 'logout' %}">Sair</a>
+        </p>
+
+        <input type="text" id="campo-busca" placeholder="Buscar procurações...">
+
+        <div id="resultados-busca">
+            </div>
+
+        <hr> <h2>Alerta de Vencimento de Procurações</h2>
+
+        <h3>Procurações Vencidas</h3>
+        <ul id="lista-vencidas">
+        {% for procuracao in vencidas %}
+            <li class="vencida">{{ procuracao.outorgante }} - Vencida em {{ procuracao.data_vencimento|date:"d/m/Y" }}</li>
+        {% empty %}
+            <li>Não há procurações vencidas.</li>
+        {% endfor %}
+        </ul>
+
+        <h3>Vencem nos próximos 30 dias</h3>
+        <ul id="lista-30-dias">
+        {% for procuracao in vencem_em_30_dias %}
+            <li class="alerta-30">{{ procuracao.outorgante }} - Vence em {{ procuracao.data_vencimento|date:"d/m/Y" }}</li>
+        {% empty %}
+            <li>Não há procurações que vencem nos próximos 30 dias.</li>
+        {% endfor %}
+        </ul>
+
+        <h3>Vencem nos próximos 60 dias</h3>
+        <ul id="lista-60-dias">
+        {% for procuracao in vencem_em_60_dias %}
+            <li class="alerta-60">{{ procuracao.outorgante }} - Vence em {{ procuracao.data_vencimento|date:"d/m/Y" }}</li>
+        {% empty %}
+            <li>Não há procurações que vencem nos próximos 60 dias.</li>
+        {% endfor %}
+        </ul>
+
+        <h3>Outras Procurações</h3>
+        <ul id="lista-outras">
+        {% for procuracao in outras_procuracoes %}
+            <li>{{ procuracao.outorgante }} - Vence em {{ procuracao.data_vencimento|date:"d/m/Y" }}</li>
+        {% empty %}
+            <li>Não há outras procurações cadastradas.</li>
+        {% endfor %}
+        </ul>
+    </div>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
