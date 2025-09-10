@@ -76,3 +76,30 @@ button:hover {
 .mensagem-erro {
     color: #e74c3c;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+.card.alerta-vencido {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+.card.alerta-30 {
+    background-color: #fff3cd;
+    color: #664d03;
+    border-color: #ffecb5;
+}
+.card.alerta-60 {
+    background-color: #cff4fc;
+    color: #055160;
+    border-color: #b6effb;
+}
+.card.alerta-outros {
+    background-color: #e2e3e5;
+    color: #414345;
+    border-color: #d3d6d8;
+}

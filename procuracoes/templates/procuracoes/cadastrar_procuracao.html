@@ -1,24 +1,52 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar Procuração</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <div class="container">
-        <h1>Cadastrar Nova Procuração</h1>
 
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Cadastrar</button>
-        </form>
+{% block title %}Cadastrar Procuração{% endblock %}
 
-        <br>
-        <a href="{% url 'home' %}">Voltar para a página inicial</a>
-    </div>
-</body>
-</html>
+{% block content %}
+    <section id="cadastrar-procuracao" aria-labelledby="cadastro-title">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 id="cadastro-title" class="mb-0">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    Cadastrar Nova Procuração
+                </h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.outorgante.id_for_label }}" class="form-label">{{ form.outorgante.label }}</label>
+                            {{ form.outorgante }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.outorgado.id_for_label }}" class="form-label">{{ form.outorgado.label }}</label>
+                            {{ form.outorgado }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.data_emissao.id_for_label }}" class="form-label">{{ form.data_emissao.label }}</label>
+                            {{ form.data_emissao }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.data_vencimento.id_for_label }}" class="form-label">{{ form.data_vencimento.label }}</label>
+                            {{ form.data_vencimento }}
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="{{ form.observacoes.id_for_label }}" class="form-label">{{ form.observacoes.label }}</label>
+                            {{ form.observacoes }}
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% url 'home' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-1"></i>Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Salvar Procuração
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

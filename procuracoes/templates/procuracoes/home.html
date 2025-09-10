@@ -1,64 +1,118 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S.I.P.E. - Alerta de Vencimento</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <div class="container">
-        <h1>Bem-vindo ao S.I.P.E.</h1>
-        <p>Olá, {{ user.username }}!</p>
-        <p>
-            <a href="{% url 'cadastrar_procuracao' %}">Cadastrar Nova Procuração</a> | 
-            <a href="{% url 'logout' %}">Sair</a>
-        </p>
 
-        <input type="text" id="campo-busca" placeholder="Buscar procurações...">
+{% block title %}Dashboard{% endblock %}
 
-        <div id="resultados-busca">
+{% block content %}
+    <section id="dashboard" aria-labelledby="dashboard-title">
+        <h1 id="dashboard-title" class="mb-4">
+            <i class="fas fa-chart-line text-primary me-2"></i>
+            Dashboard - Gestão de Procurações
+        </h1>
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-alt fa-3x mb-3"></i>
+                        <h5 class="card-title">Total de Procurações</h5>
+                        <h2 class="mb-0">{{ total_procuracoes }}</h2>
+                    </div>
+                </div>
             </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-danger text-white h-100">
+                    <div class="card-body text-center position-relative">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                        <h5 class="card-title">Vencidas</h5>
+                        <h2 class="mb-0">{{ vencidas|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-warning text-white h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock fa-3x mb-3"></i>
+                        <h5 class="card-title">Próximos 30 Dias</h5>
+                        <h2 class="mb-0">{{ vencem_em_30_dias|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle fa-3x mb-3"></i>
+                        <h5 class="card-title">Total Cadastradas</h5>
+                        <h2 class="mb-0">{{ total_procuracoes }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <hr> <h2>Alerta de Vencimento de Procurações</h2>
+    <section id="procuracoes" aria-labelledby="procuracoes-title">
+        <div class="card mb-4">
+            <div class="card-header d-flex align-items-center">
+                <h2 id="procuracoes-title" class="mb-0">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    Cadastrar Nova Procuração
+                </h2>
+            </div>
+            <div class="card-body" id="formContainer">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_numero" class="form-label">Número da Procuração *</label>
+                            <input type="text" class="form-control" id="id_numero" name="numero" required placeholder="Número único identificador da procuração">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.outorgante.id_for_label }}" class="form-label">{{ form.outorgante.label }} *</label>
+                            {{ form.outorgante }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.outorgado.id_for_label }}" class="form-label">{{ form.outorgado.label }} *</label>
+                            {{ form.outorgado }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.data_vencimento.id_for_label }}" class="form-label">{{ form.data_vencimento.label }} *</label>
+                            {{ form.data_vencimento }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_prioridade" class="form-label">Prioridade</label>
+                            <select class="form-select" id="id_prioridade" name="prioridade">
+                                <option value="low">Baixa</option>
+                                <option value="medium" selected>Média</option>
+                                <option value="high">Alta</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_status" class="form-label">Status</label>
+                            <select class="form-select" id="id_status" name="status">
+                                <option value="active" selected>Ativa</option>
+                                <option value="expired">Expirada</option>
+                                <option value="renewed">Renovada</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.observacoes.id_for_label }}" class="form-label">{{ form.observacoes.label }}</label>
+                        {{ form.observacoes }}
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-eraser me-1"></i>Limpar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Salvar Procuração
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-        <h3>Procurações Vencidas</h3>
-        <ul id="lista-vencidas">
-        {% for procuracao in vencidas %}
-            <li class="vencida">{{ procuracao.outorgante }} - Vencida em {{ procuracao.data_vencimento|date:"d/m/Y" }}</li>
-        {% empty %}
-            <li>Não há procurações vencidas.</li>
-        {% endfor %}
-        </ul>
-
-        <h3>Vencem nos próximos 30 dias</h3>
-        <ul id="lista-30-dias">
-        {% for procuracao in vencem_em_30_dias %}
-            <li class="alerta-30">{{ procuracao.outorgante }} - Vence em {{ procuracao.data_vencimento|date:"d/m/Y" }}</li>
-        {% empty %}
-            <li>Não há procurações que vencem nos próximos 30 dias.</li>
-        {% endfor %}
-        </ul>
-
-        <h3>Vencem nos próximos 60 dias</h3>
-        <ul id="lista-60-dias">
-        {% for procuracao in vencem_em_60_dias %}
-            <li class="alerta-60">{{ procuracao.outorgante }} - Vence em {{ procuracao.data_vencimento|date:"d/m/Y" }}</li>
-        {% empty %}
-            <li>Não há procurações que vencem nos próximos 60 dias.</li>
-        {% endfor %}
-        </ul>
-
-        <h3>Outras Procurações</h3>
-        <ul id="lista-outras">
-        {% for procuracao in outras_procuracoes %}
-            <li>{{ procuracao.outorgante }} - Vence em {{ procuracao.data_vencimento|date:"d/m/Y" }}</li>
-        {% empty %}
-            <li>Não há outras procurações cadastradas.</li>
-        {% endfor %}
-        </ul>
-    </div>
-    <script src="{% static 'js/main.js' %}"></script>
-</body>
-</html>
+        </section>
+{% endblock %}

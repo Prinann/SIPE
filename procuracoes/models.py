@@ -4,13 +4,29 @@ from django.contrib.auth.models import User
 # Tipos de procuração Ad Judicia (exemplo)
 TIPO_PROCURACAO_CHOICES = (
     ('AD_JUDICIA', 'Ad Judicia'),
-    # Podemos adicionar mais tipos futuramente, se necessário
+)
+
+# Opções para Prioridade
+PRIORIDADE_CHOICES = (
+    ('low', 'Baixa'),
+    ('medium', 'Média'),
+    ('high', 'Alta'),
+)
+
+# Opções para Status
+STATUS_CHOICES = (
+    ('active', 'Ativa'),
+    ('expired', 'Expirada'),
+    ('renewed', 'Renovada'),
 )
 
 class Procuracao(models.Model):
     # Campo para vincular a procuração a um usuário
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+
+    # Novo campo para o número da procuração
+    numero = models.CharField(max_length=100, verbose_name='Número da Procuração', unique=True, default='')
+
     # Informações da procuração
     tipo = models.CharField(
         max_length=50,
@@ -20,17 +36,18 @@ class Procuracao(models.Model):
     )
     outorgante = models.CharField(max_length=200, verbose_name='Outorgante')
     outorgado = models.CharField(max_length=200, verbose_name='Outorgado')
-    
+
     # Datas
-    data_emissao = models.DateField(verbose_name='Data de Emissão')
+    data_emissao = models.DateField(verbose_name='Data de Emissão') # Mantido pois é boa prática
     data_vencimento = models.DateField(verbose_name='Data de Vencimento')
-    
-    # Status de alerta, para facilitar a filtragem
-    esta_vencida = models.BooleanField(default=False)
-    
+
+    # Novos campos
+    prioridade = models.CharField(max_length=10, choices=PRIORIDADE_CHOICES, default='medium', verbose_name='Prioridade')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active', verbose_name='Status')
+
     # Campo de texto opcional
     observacoes = models.TextField(blank=True, null=True, verbose_name='Observações')
-    
+
     def __str__(self):
         return f'Procuração de {self.outorgante} para {self.outorgado}'
 

@@ -6,30 +6,46 @@ from .forms import ProcuracaoForm
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q # Importe a classe Q para consultas complexas
+from django.db.models import Q
 
-# View da página inicial (já existente)
 @login_required
 def home(request):
     hoje = timezone.localdate()
-    limite_30_dias = hoje + timedelta(days=30)
-    limite_60_dias = hoje + timedelta(days=60)
+    
+    # Processa o formulário de cadastro se a requisição for POST
+    if request.method == 'POST':
+        form = ProcuracaoForm(request.POST)
+        if form.is_valid():
+            procuracao = form.save(commit=False)
+            procuracao.usuario = request.user
+            procuracao.save()
+            return redirect(reverse('home')) # Redireciona para a mesma página
+    else:
+        form = ProcuracaoForm() # Cria um formulário vazio para requisições GET
 
+    # Filtra as procurações para o usuário logado
     procuracoes = Procuracao.objects.filter(usuario=request.user).order_by('data_vencimento')
-
-    vencidas = [p for p in procuracoes if p.data_vencimento < hoje]
-    vencem_em_30_dias = [p for p in procuracoes if hoje <= p.data_vencimento <= limite_30_dias]
-    vencem_em_60_dias = [p for p in procuracoes if limite_30_dias < p.data_vencimento <= limite_60_dias]
-    outras_procuracoes = [p for p in procuracoes if p.data_vencimento > limite_60_dias]
+    
+    total_procuracoes = procuracoes.count()
+    vencidas = procuracoes.filter(data_vencimento__lt=hoje)
+    vencem_em_30_dias = procuracoes.filter(data_vencimento__gte=hoje, data_vencimento__lte=hoje + timedelta(days=30))
+    outras_procuracoes = procuracoes.filter(data_vencimento__gt=hoje + timedelta(days=30))
 
     context = {
+        'form': form, # Adiciona o formulário ao contexto
+        'total_procuracoes': total_procuracoes,
         'vencidas': vencidas,
         'vencem_em_30_dias': vencem_em_30_dias,
-        'vencem_em_60_dias': vencem_em_60_dias,
         'outras_procuracoes': outras_procuracoes,
     }
-
+    
     return render(request, 'procuracoes/home.html', context)
+
+def api_buscar_procuracoes(request):
+    # ... (código da sua API de busca, não precisa mudar)
+    pass
+
+# ... (restante do seu código, como cadastrar_procuracao e api_buscar_procuracoes)
 
 # View para o cadastro (já existente)
 @login_required
