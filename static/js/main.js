@@ -1,43 +1,50 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Busca
     const searchInput = document.getElementById('searchInput');
-    const filtroStatus = document.getElementById('filtroStatus');
     const cards = document.querySelectorAll('#procuracoesList .card');
 
-    function filtrarCards() {
-        const statusSelecionado = filtroStatus.value.toLowerCase();
-        const textoBusca = searchInput.value.trim().toLowerCase();
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase();
 
         cards.forEach(card => {
-            const statusCard = card.dataset.status.toLowerCase();
-            const conteudo = card.innerText.toLowerCase();
+            const outorgante = card.querySelector('.card-title').innerText.toLowerCase();
+            const outorgado = card.querySelector('.card-text').innerText.toLowerCase();
 
-            const atendeStatus = !statusSelecionado || statusCard === statusSelecionado;
-            const atendeBusca = !textoBusca || conteudo.includes(textoBusca);
-
-            if (atendeStatus && atendeBusca) {
-                card.style.display = 'block';
+            if (outorgante.includes(query) || outorgado.includes(query)) {
+                card.closest('.col-lg-4').style.display = 'block';
             } else {
-                card.style.display = 'none';
+                card.closest('.col-lg-4').style.display = 'none';
             }
         });
+    });
+
+    // Filtro por status
+    window.filtrarProcuracoes = () => {
+        const statusSelecionado = document.getElementById('filtroStatus').value;
+
+        cards.forEach(card => {
+            const statusCard = card.dataset.status;
+
+            if (!statusSelecionado || statusCard === statusSelecionado) {
+                card.closest('.col-lg-4').style.display = 'block';
+            } else {
+                card.closest('.col-lg-4').style.display = 'none';
+            }
+        });
+    };
+
+    // Scroll topo
+    const btnTopo = document.getElementById("btn-topo");
+    window.onscroll = function() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            btnTopo.style.display = "block";
+        } else {
+            btnTopo.style.display = "none";
+        }
     }
 
-    filtroStatus.addEventListener('change', filtrarCards);
-    searchInput.addEventListener('input', filtrarCards);
-
-    // Botão voltar ao topo
-    const btnTopo = document.getElementById('btn-topo');
-    if (btnTopo) {
-        window.onscroll = function() {
-            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                btnTopo.style.display = 'block';
-            } else {
-                btnTopo.style.display = 'none';
-            }
-        };
-        btnTopo.addEventListener('click', () => {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-        });
+    window.topFunction = () => {
+        document.body.scrollTop = 0; // Safari
+        document.documentElement.scrollTop = 0; // Chrome, Firefox, IE e Opera
     }
 });

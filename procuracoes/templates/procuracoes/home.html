@@ -4,238 +4,242 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <section id="dashboard" aria-labelledby="dashboard-title">
-        <h1 id="dashboard-title" class="mb-4">
-            <i class="fas fa-chart-line text-primary me-2"></i>
-            Dashboard - Gestão de Procurações
-        </h1>
+<section id="dashboard" aria-labelledby="dashboard-title">
+    <h1 id="dashboard-title" class="mb-4">
+        <i class="fas fa-chart-line text-primary me-2"></i>
+        Dashboard - Gestão de Procurações
+    </h1>
 
-        <div class="row mb-4">
-            <div class="col-md-3 mb-3">
-                <div class="card stats-card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-file-alt fa-3x mb-3"></i>
-                        <h5 class="card-title">Total de Procurações</h5>
-                        <h2 class="mb-0">{{ total_procuracoes }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-danger text-white h-100">
-                    <div class="card-body text-center position-relative">
-                        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
-                        <h5 class="card-title">Vencidas</h5>
-                        <h2 class="mb-0">{{ vencidas|length }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-warning text-white h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-clock fa-3x mb-3"></i>
-                        <h5 class="card-title">Próximos 30 Dias</h5>
-                        <h2 class="mb-0">{{ vencem_em_30_dias|length }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-success text-white h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-check-circle fa-3x mb-3"></i>
-                        <h5 class="card-title">Total Cadastradas</h5>
-                        <h2 class="mb-0">{{ total_procuracoes }}</h2>
-                    </div>
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt fa-3x mb-3"></i>
+                    <h5 class="card-title">Total de Procurações</h5>
+                    <h2 class="mb-0">{{ total_procuracoes }}</h2>
                 </div>
             </div>
         </div>
-    </section>
-
-    <section id="procuracoes" aria-labelledby="procuracoes-title">
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="mb-0">
-                        <i class="fas fa-list me-2"></i>Lista de Procurações
-                    </h2>
-                    <a href="{% url 'cadastrar_procuracao' %}" class="btn btn-primary">
-    <i class="fas fa-plus-circle me-1"></i> Cadastrar Nova
-</a>
-                </div>
-
-                <div class="row mb-4">
-                    <div class="col-md-8 mb-3">
-                        <label for="searchInput" class="form-label">Pesquisar Procurações</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar por número, outorgante ou outorgado..." aria-label="Campo de pesquisa">
-                            <button class="btn btn-outline-secondary" type="button" aria-label="Pesquisar">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="filtroStatus" class="form-label">Filtrar por Status</label>
-                        <select class="form-select" id="filtroStatus" onchange="filtrarProcuracoes()">
-                            <option value="">Todos</option>
-                            <option value="active">Ativas</option>
-                            <option value="expired">Expiradas</option>
-                            <option value="renewed">Renovadas</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row" id="procuracoesList">
-                    {% if vencidas %}
-                        <div class="col-12 mb-4">
-                            <h4 class="text-danger">Procurações Vencidas</h4>
-                            <div class="row">
-                                {% for procuracao in vencidas %}
-                                    <div class="col-lg-4 col-md-6 mb-4">
-                                        <div class="card priority-high h-100" data-status="{{ procuracao.status }}">
-                                            <div class="card-body">
-                                                <h6 class="card-title">
-                                                    <i class="fas fa-user me-1"></i> {{ procuracao.outorgante }}
-                                                </h6>
-                                                <p class="card-text">
-                                                    <small class="text-muted">Outorgado:</small><br>
-                                                    {{ procuracao.outorgado }}
-                                                </p>
-                                                <div class="row text-center mt-3">
-                                                    <div class="col-12">
-                                                        <small class="text-muted">Vencimento:</small><br>
-                                                        <strong class="text-danger">{{ procuracao.data_vencimento|date:"d/m/Y" }}</strong>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card-footer d-flex gap-2">
-                                                <a href="{% url 'editar_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-primary flex-fill" aria-label="Editar procuração">
-                                                    <i class="fas fa-edit"></i> Editar
-                                                </a>
-                                                <a href="{% url 'excluir_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-danger" aria-label="Excluir procuração">
-                                                    <i class="fas fa-trash"></i> Excluir
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if vencem_em_30_dias %}
-                        <div class="col-12 mb-4">
-                            <h4 class="text-warning">Vencem nos próximos 30 dias</h4>
-                            <div class="row">
-                                {% for procuracao in vencem_em_30_dias %}
-                                    <div class="col-lg-4 col-md-6 mb-4">
-                                        <div class="card priority-medium h-100">
-                                            <div class="card-body">
-                                                <h6 class="card-title">
-                                                    <i class="fas fa-user me-1"></i> {{ procuracao.outorgante }}
-                                                </h6>
-                                                <p class="card-text">
-                                                    <small class="text-muted">Outorgado:</small><br>
-                                                    {{ procuracao.outorgado }}
-                                                </p>
-                                                <div class="row text-center mt-3">
-                                                    <div class="col-12">
-                                                        <small class="text-muted">Vencimento:</small><br>
-                                                        <strong class="text-warning">{{ procuracao.data_vencimento|date:"d/m/Y" }}</strong>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card-footer d-flex gap-2">
-                                                <a href="{% url 'editar_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-primary flex-fill" aria-label="Editar procuração">
-                                                    <i class="fas fa-edit"></i> Editar
-                                                </a>
-                                                <a href="{% url 'excluir_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-danger" aria-label="Excluir procuração">
-                                                    <i class="fas fa-trash"></i> Excluir
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if outras_procuracoes %}
-                        <div class="col-12 mb-4">
-                            <h4 class="text-muted">Outras Procurações</h4>
-                            <div class="row">
-                                {% for procuracao in outras_procuracoes %}
-                                    <div class="col-lg-4 col-md-6 mb-4">
-                                        <div class="card priority-low h-100">
-                                            <div class="card-body">
-                                                <h6 class="card-title">
-                                                    <i class="fas fa-user me-1"></i> {{ procuracao.outorgante }}
-                                                </h6>
-                                                <p class="card-text">
-                                                    <small class="text-muted">Outorgado:</small><br>
-                                                    {{ procuracao.outorgado }}
-                                                </p>
-                                                <div class="row text-center mt-3">
-                                                    <div class="col-12">
-                                                        <small class="text-muted">Vencimento:</small><br>
-                                                        <strong class="text-success">{{ procuracao.data_vencimento|date:"d/m/Y" }}</strong>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card-footer d-flex gap-2">
-                                                <a href="{% url 'editar_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-primary flex-fill" aria-label="Editar procuração">
-                                                    <i class="fas fa-edit"></i> Editar
-                                                </a>
-                                                <a href="{% url 'excluir_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-danger" aria-label="Excluir procuração">
-                                                    <i class="fas fa-trash"></i> Excluir
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% if not vencidas and not vencem_em_30_dias and not outras_procuracoes %}
-                        <div class="col-12 text-center py-5">
-                            <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
-                            <h4 class="text-muted">Nenhuma procuração cadastrada.</h4>
-                            <p class="text-muted">Comece a usar o sistema cadastrando sua primeira procuração.</p>
-                        </div>
-                    {% endif %}
+        <div class="col-md-3 mb-3">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body text-center position-relative">
+                    <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                    <h5 class="card-title">Vencidas</h5>
+                    <h2 class="mb-0">{{ vencidas|length }}</h2>
                 </div>
             </div>
         </div>
-    </section>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-3x mb-3"></i>
+                    <h5 class="card-title">Próximos 30 Dias</h5>
+                    <h2 class="mb-0">{{ vencem_em_30_dias|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-3x mb-3"></i>
+                    <h5 class="card-title">Total Cadastradas</h5>
+                    <h2 class="mb-0">{{ total_procuracoes }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <section id="alertas" class="mt-5" aria-labelledby="alertas-title">
-        <div class="card">
-            <div class="card-header bg-warning text-dark">
-                <h2 id="alertas-title" class="mb-0">
-                    <i class="fas fa-bell me-2"></i>Sistema de Alertas
+<section id="procuracoes" aria-labelledby="procuracoes-title">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0">
+                    <i class="fas fa-list me-2"></i>Lista de Procurações
                 </h2>
+                <a href="{% url 'cadastrar_procuracao' %}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle me-1"></i> Cadastrar Nova
+                </a>
             </div>
-            <div class="card-body">
-                <div id="alertasList" role="region" aria-label="Lista de alertas de vencimento">
-                    {% if vencidas %}
-                        <div class="alert alert-danger" role="alert">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            <strong>{{ vencidas|length }} procuração(ões) vencida(s)!</strong> Verifique a lista de procurações.
-                        </div>
-                    {% endif %}
-                    {% if vencem_em_30_dias %}
-                        <div class="alert alert-warning" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <strong>{{ vencem_em_30_dias|length }} procuração(ões) vencem nos próximos 30 dias.</strong>
-                        </div>
-                    {% endif %}
-                    {% if not vencidas and not vencem_em_30_dias %}
-                        <div class="alert alert-success" role="alert">
-                            <i class="fas fa-check-circle me-2"></i>
-                            Não há procurações vencidas ou em alerta de 30 dias.
-                        </div>
-                    {% endif %}
+
+            <div class="row mb-4">
+                <div class="col-md-8 mb-3">
+                    <label for="searchInput" class="form-label">Pesquisar Procurações</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar por número, outorgante ou outorgado..." aria-label="Campo de pesquisa">
+                        <button class="btn btn-outline-secondary" type="button" aria-label="Pesquisar">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="filtroStatus" class="form-label">Filtrar por Status</label>
+                    <select class="form-select" id="filtroStatus" onchange="filtrarProcuracoes()">
+                        <option value="">Todos</option>
+                        <option value="active">Ativas</option>
+                        <option value="expired">Expiradas</option>
+                        <option value="renewed">Renovadas</option>
+                    </select>
                 </div>
             </div>
+
+            <div class="row" id="procuracoesList">
+                {% if vencidas %}
+                    <div class="col-12 mb-4">
+                        <h4 class="text-danger">Procurações Vencidas</h4>
+                        <div class="row">
+                            {% for procuracao in vencidas %}
+                                <div class="col-lg-4 col-md-6 mb-4">
+                                    <div class="card priority-high h-100" data-status="expired">
+                                        <div class="card-body">
+                                            <h6 class="card-title">
+                                                <i class="fas fa-user me-1"></i> {{ procuracao.outorgante }}
+                                            </h6>
+                                            <p class="card-text">
+                                                <small class="text-muted">Outorgado:</small><br>
+                                                {{ procuracao.outorgado }}
+                                            </p>
+                                            <div class="row text-center mt-3">
+                                                <div class="col-12">
+                                                    <small class="text-muted">Vencimento:</small><br>
+                                                    <strong class="text-danger">{{ procuracao.data_vencimento|date:"d/m/Y" }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer d-flex gap-2">
+                                            <a href="{% url 'editar_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-primary flex-fill" aria-label="Editar procuração">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <a href="{% url 'excluir_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-danger" aria-label="Excluir procuração">
+                                                <i class="fas fa-trash"></i> Excluir
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if vencem_em_30_dias %}
+                    <div class="col-12 mb-4">
+                        <h4 class="text-warning">Vencem nos próximos 30 dias</h4>
+                        <div class="row">
+                            {% for procuracao in vencem_em_30_dias %}
+                                <div class="col-lg-4 col-md-6 mb-4">
+                                    <div class="card priority-medium h-100" data-status="active">
+                                        <div class="card-body">
+                                            <h6 class="card-title">
+                                                <i class="fas fa-user me-1"></i> {{ procuracao.outorgante }}
+                                            </h6>
+                                            <p class="card-text">
+                                                <small class="text-muted">Outorgado:</small><br>
+                                                {{ procuracao.outorgado }}
+                                            </p>
+                                            <div class="row text-center mt-3">
+                                                <div class="col-12">
+                                                    <small class="text-muted">Vencimento:</small><br>
+                                                    <strong class="text-warning">{{ procuracao.data_vencimento|date:"d/m/Y" }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer d-flex gap-2">
+                                            <a href="{% url 'editar_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-primary flex-fill" aria-label="Editar procuração">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <a href="{% url 'excluir_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-danger" aria-label="Excluir procuração">
+                                                <i class="fas fa-trash"></i> Excluir
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if outras_procuracoes %}
+                    <div class="col-12 mb-4">
+                        <h4 class="text-muted">Outras Procurações</h4>
+                        <div class="row">
+                            {% for procuracao in outras_procuracoes %}
+                                <div class="col-lg-4 col-md-6 mb-4">
+                                    <div class="card priority-low h-100" data-status="renewed">
+                                        <div class="card-body">
+                                            <h6 class="card-title">
+                                                <i class="fas fa-user me-1"></i> {{ procuracao.outorgante }}
+                                            </h6>
+                                            <p class="card-text">
+                                                <small class="text-muted">Outorgado:</small><br>
+                                                {{ procuracao.outorgado }}
+                                            </p>
+                                            <div class="row text-center mt-3">
+                                                <div class="col-12">
+                                                    <small class="text-muted">Vencimento:</small><br>
+                                                    <strong class="text-success">{{ procuracao.data_vencimento|date:"d/m/Y" }}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer d-flex gap-2">
+                                            <a href="{% url 'editar_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-primary flex-fill" aria-label="Editar procuração">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <a href="{% url 'excluir_procuracao' procuracao.pk %}" class="btn btn-sm btn-outline-danger" aria-label="Excluir procuração">
+                                                <i class="fas fa-trash"></i> Excluir
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if not vencidas and not vencem_em_30_dias and not outras_procuracoes %}
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted">Nenhuma procuração cadastrada.</h4>
+                        <p class="text-muted">Comece a usar o sistema cadastrando sua primeira procuração.</p>
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </section>
+    </div>
+</section>
+
+<section id="alertas" class="mt-5" aria-labelledby="alertas-title">
+    <div class="card">
+        <div class="card-header bg-warning text-dark">
+            <h2 id="alertas-title" class="mb-0">
+                <i class="fas fa-bell me-2"></i>Sistema de Alertas
+            </h2>
+        </div>
+        <div class="card-body">
+            <div id="alertasList" role="region" aria-label="Lista de alertas de vencimento">
+                {% if vencidas %}
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>{{ vencidas|length }} procuração(ões) vencida(s)!</strong> Verifique a lista de procurações.
+                    </div>
+                {% endif %}
+                {% if vencem_em_30_dias %}
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>{{ vencem_em_30_dias|length }} procuração(ões) vencem nos próximos 30 dias.</strong>
+                    </div>
+                {% endif %}
+                {% if not vencidas and not vencem_em_30_dias %}
+                    <div class="alert alert-success" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Não há procurações vencidas ou em alerta de 30 dias.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<button onclick="topFunction()" id="btn-topo" title="Ir para o topo" class="btn btn-primary" style="display:none; position: fixed; bottom: 20px; right: 30px; z-index:99;">
+    <i class="fas fa-arrow-up"></i>
+</button>
 {% endblock %}
