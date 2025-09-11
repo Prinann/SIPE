@@ -90,7 +90,7 @@
                             <div class="row">
                                 {% for procuracao in vencidas %}
                                     <div class="col-lg-4 col-md-6 mb-4">
-                                        <div class="card priority-high h-100">
+                                        <div class="card priority-high h-100" data-status="{{ procuracao.status }}">
                                             <div class="card-body">
                                                 <h6 class="card-title">
                                                     <i class="fas fa-user me-1"></i> {{ procuracao.outorgante }}
