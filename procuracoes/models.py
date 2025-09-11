@@ -23,7 +23,7 @@ STATUS_CHOICES = (
 class Procuracao(models.Model):
     # Campo para vincular a procuração a um usuário
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    
     # Novo campo para o número da procuração
     numero = models.CharField(max_length=100, verbose_name='Número da Procuração', unique=True, default='')
 
@@ -36,18 +36,18 @@ class Procuracao(models.Model):
     )
     outorgante = models.CharField(max_length=200, verbose_name='Outorgante')
     outorgado = models.CharField(max_length=200, verbose_name='Outorgado')
-
+    
     # Datas
-    data_emissao = models.DateField(verbose_name='Data de Emissão') # Mantido pois é boa prática
+    data_emissao = models.DateField(verbose_name='Data de Emissão')
     data_vencimento = models.DateField(verbose_name='Data de Vencimento')
-
+    
     # Novos campos
     prioridade = models.CharField(max_length=10, choices=PRIORIDADE_CHOICES, default='medium', verbose_name='Prioridade')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active', verbose_name='Status')
 
     # Campo de texto opcional
     observacoes = models.TextField(blank=True, null=True, verbose_name='Observações')
-
+    
     def __str__(self):
         return f'Procuração de {self.outorgante} para {self.outorgado}'
 

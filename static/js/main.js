@@ -1,75 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const campoBusca = document.getElementById('campo-busca');
-    const resultadosBuscaDiv = document.getElementById('resultados-busca');
-    const secoesProcuracoes = document.querySelectorAll('h3.mt-4, .table-responsive, p');
+    const searchInput = document.getElementById('searchInput');
+    const filtroStatus = document.getElementById('filtroStatus');
+    const cards = document.querySelectorAll('#procuracoesList .card');
 
-    const buscarProcuracoes = async (query) => {
-        if (query.length < 2) {
-            resultadosBuscaDiv.innerHTML = '';
-            resultadosBuscaDiv.style.display = 'none';
-            secoesProcuracoes.forEach(el => el.style.display = 'block');
-            return;
-        }
+    function filtrarCards() {
+        const statusSelecionado = filtroStatus.value.toLowerCase();
+        const textoBusca = searchInput.value.trim().toLowerCase();
 
-        resultadosBuscaDiv.style.display = 'block';
-        secoesProcuracoes.forEach(el => el.style.display = 'none');
+        cards.forEach(card => {
+            const statusCard = card.dataset.status.toLowerCase();
+            const conteudo = card.innerText.toLowerCase();
 
-        try {
-            const response = await fetch(`/api/buscar/?q=${query}`);
-            const data = await response.json();
+            const atendeStatus = !statusSelecionado || statusCard === statusSelecionado;
+            const atendeBusca = !textoBusca || conteudo.includes(textoBusca);
 
-            let html = '<h3>Resultados da Busca</h3>';
-            if (data.procuracoes.length > 0) {
-                html += `<div class="table-responsive">
-                            <table class="table table-striped table-bordered">
-                                <thead class="table-primary text-white">
-                                    <tr>
-                                        <th>Outorgante</th>
-                                        <th>Outorgado</th>
-                                        <th>Data de Vencimento</th>
-                                    </tr>
-                                </thead>
-                                <tbody>`;
-                data.procuracoes.forEach(proc => {
-                    const dataVencimento = new Date(proc.data_vencimento).toLocaleDateString('pt-BR');
-                    html += `<tr>
-                                <td>${proc.outorgante}</td>
-                                <td>${proc.outorgado}</td>
-                                <td>${dataVencimento}</td>
-                            </tr>`;
-                });
-                html += `       </tbody>
-                            </table>
-                        </div>`;
+            if (atendeStatus && atendeBusca) {
+                card.style.display = 'block';
             } else {
-                html += '<p>Nenhuma procuração encontrada.</p>';
+                card.style.display = 'none';
             }
+        });
+    }
 
-            resultadosBuscaDiv.innerHTML = html;
+    filtroStatus.addEventListener('change', filtrarCards);
+    searchInput.addEventListener('input', filtrarCards);
 
-        } catch (error) {
-            console.error('Erro ao buscar procurações:', error);
-            resultadosBuscaDiv.innerHTML = '<p class="text-danger">Ocorreu um erro na busca.</p>';
-        }
-    };
-
-    campoBusca.addEventListener('input', (event) => {
-        const query = event.target.value;
-        buscarProcuracoes(query);
-    });
+    // Botão voltar ao topo
+    const btnTopo = document.getElementById('btn-topo');
+    if (btnTopo) {
+        window.onscroll = function() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                btnTopo.style.display = 'block';
+            } else {
+                btnTopo.style.display = 'none';
+            }
+        };
+        btnTopo.addEventListener('click', () => {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        });
+    }
 });
-
-window.onscroll = function() {scrollFunction()};
-
-function scrollFunction() {
-  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-    document.getElementById("btn-topo").style.display = "block";
-  } else {
-    document.getElementById("btn-topo").style.display = "none";
-  }
-}
-
-function topFunction() {
-  document.body.scrollTop = 0; // Para Safari
-  document.documentElement.scrollTop = 0; // Para Chrome, Firefox, IE e Opera
-}
